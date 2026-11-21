@@ -2,8 +2,7 @@
 
 The public site of Broudy Labs, Julian Broudy's game studio. It holds a home page, a page for each game, and each game's privacy policy and terms of use. Google Play, AdMob and the games link to these pages.
 
-- Now: https://julianbroudy.github.io/broudy-labs-site/
-- Later (phase 2, after DNS works): https://labs.broudy.io/
+- Live: https://labs.broudy.io/ (since 21 Nov 2026; the github.io address redirects here by itself)
 
 Plain static HTML. No framework, no build step, no trackers, no cookies, no external scripts. The fonts (Figtree, Lilita One, SIL Open Font License) are in `assets/fonts/`. Colours and fonts come from the games' house look (`game-template/src/ui/app.css`), light and dark.
 
@@ -37,6 +36,10 @@ When a game is public on Google Play, replace its "Coming soon" span with the Go
 1. Make `<game>/index.html`, `<game>/privacy/index.html` and `<game>/terms/index.html` (copy another game's).
 2. Put a 176 px icon in `assets/<game>/icon.png`, and screenshots (540 px wide, WebP) as `shot-1.webp` and on.
 3. Add a card to `index.html`, and the game to `GAMES` in `scripts/check-links.mjs`.
+
+## The old site
+
+Before 21 Nov 2026 the pages were on the old site (repo `JulianBroudy/skedaddle-site`). Installed builds and old store links still point at it, so its pages stay. Each one is now a small page that sends people to its page here. `bash scripts/publish-redirects.sh` writes and pushes them (the map is in the script). Never delete them.
 
 ## Pre-mortem
 
