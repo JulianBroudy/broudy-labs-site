@@ -1,0 +1,9 @@
+{
+  "name": "logo-build",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "potrace": "^2.1.8",
+    "sharp": "^0.35.5"
+  }
+}
