@@ -1,0 +1,35 @@
+[
+  {
+    "id": "D",
+    "browMaxThicknessSrcPx": 17.4,
+    "browMaxVsD": 1,
+    "widestAtXFromPupilCentre": -39.1
+  },
+  {
+    "id": "E",
+    "grow": {
+      "max": 1.25
+    },
+    "browMaxThicknessSrcPx": 21.7,
+    "browMaxVsD": 1.25,
+    "widestAtXFromPupilCentre": -48
+  },
+  {
+    "id": "F",
+    "grow": {
+      "max": 1.5
+    },
+    "browMaxThicknessSrcPx": 26.1,
+    "browMaxVsD": 1.5,
+    "widestAtXFromPupilCentre": -52
+  },
+  {
+    "id": "G",
+    "grow": {
+      "max": 1.75
+    },
+    "browMaxThicknessSrcPx": 30.4,
+    "browMaxVsD": 1.75,
+    "widestAtXFromPupilCentre": -54
+  }
+]
