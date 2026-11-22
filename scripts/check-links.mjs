@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SKIP = new Set(['.git', '.github', 'scripts', 'node_modules']);
-const GAMES = ['skedaddle', 'budge', 'plonk', 'whackayou'];
+const GAMES = ['skedaddle', 'budge', 'plonk', 'whackayou', 'hoopwood'];
 const ADS_LINE = 'google.com, pub-7183780147802828, DIRECT, f08c47fec0942fa0';
 const problems = [];
 
