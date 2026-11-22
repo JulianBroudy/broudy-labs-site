@@ -1,6 +1,6 @@
 # Broudy Labs site
 
-The public site of Broudy Labs, Julian Broudy's game studio. It holds a home page, a page for each game, and each game's privacy policy and terms of use. Google Play, AdMob and the games link to these pages.
+The public site of Broudy Labs, a small game studio. It holds a home page, a page for each game, and each game's privacy policy and terms of use. Google Play, AdMob and the games link to these pages.
 
 - Live: https://labs.broudy.io/ (since 21 Nov 2026; the github.io address redirects here by itself)
 
