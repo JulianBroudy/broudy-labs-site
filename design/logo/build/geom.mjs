@@ -110,7 +110,87 @@ function growEyePath(px, py, ox, oy, gr) {
     `M${P([-R, 0])}a${f(R)} ${f(R)} 0 1 1 ${f(2 * R)} 0a${f(R)} ${f(R)} 0 1 1 ${f(-2 * R)} 0Z`;
 }
 
+// Merged joint (D2, F2 of 22 Nov 2026). In D the brow's right tip runs past the point where it touches
+// the pupil, as a small hook with a light slit under it. Julian wants the brow to grow out of the pupil
+// instead, as in the source. So brow and pupil are now one closed outline, clockwise:
+//   1. the brow's upper edge from the left tip (D's outer circle, or the grown edge of E/F/G),
+//   2. from angle a to angle b (degrees round the pupil centre, 0 = right, -90 = top) the distance from
+//      the pupil centre falls from the upper edge to the pupil radius with a C2 smootherstep, so the
+//      outline leaves the upper edge with the same tangent and curvature and meets the pupil circle
+//      tangentially (no corner on either side),
+//   3. the pupil circle, clockwise, from b to the point where the brow's lower edge (D's inner circle)
+//      first meets it,
+//   4. the lower edge back to the left tip.
+// Everything right of that meeting point is filled: no hook, no slit. The light gap between brow and
+// pupil is unchanged up to that point, where it ends in the same point as before.
+// opts.merge = { a, b } in degrees. Default -65 to 20: a fit to the source (joint.mjs fit) is flat
+// (about 1% between candidates), so a and b were picked by eye. A narrower blend (-60 to 0) leaves a
+// flat shoulder on the right of the pupil; -65 to 20 is convex all the way (convex.mjs) and ends near
+// the pupil's right side, as in the source. a must stay right of the lower edge's meeting point (-72.7).
+export const MERGE_DEFAULT = { a: -65, b: 20 };
+const DEG = Math.PI / 180;
+const sstep2 = (x) => (x <= 0 ? 0 : x >= 1 ? 1 : x * x * x * (x * (6 * x - 15) + 10));
+// Distance from the pupil centre to D's outer circle along the ray at angle t.
+function rOuter(t) {
+  const O = BASE.O, u0 = Math.cos(t), u1 = Math.sin(t);
+  const b = u0 * O.dx + u1 * O.dy, c = O.dx * O.dx + O.dy * O.dy - O.r * O.r;
+  return b + Math.sqrt(b * b - c);
+}
+// The upper edge as r(t) round the pupil centre. Past the right tip it continues on D's outer circle
+// (the grown edges equal D's edge near the right tip, so this is continuous).
+function upperPolar(opts) {
+  if (!opts.grow) return rOuter;
+  const pol = growEdge(opts.grow, 720).map(p => {
+    let t = Math.atan2(p[1], p[0]); if (t > Math.PI - 0.5) t -= 2 * Math.PI;
+    return [t, Math.hypot(p[0], p[1])];
+  });
+  const tEnd = pol[pol.length - 1][0];
+  return (t) => {
+    if (t >= tEnd) return rOuter(t);
+    let i = pol.findIndex(q => q[0] >= t); if (i <= 0) i = 1;
+    const [t0, r0] = pol[i - 1], [t1, r1] = pol[i];
+    return r0 + (r1 - r0) * (t - t0) / (t1 - t0);
+  };
+}
+// Angle (round the pupil centre) of the first point where the lower edge meets the pupil, going
+// clockwise over the top of the pupil, and of the left tip.
+export function mergeFrame() {
+  const { O, I, R } = BASE;
+  const [pL] = circleInter([O.dx, O.dy], O.r, [I.dx, I.dy], I.r).sort((p, q) => p[0] - q[0]);
+  const ci = circleInter([0, 0], R, [I.dx, I.dy], I.r).map(p => [p, Math.atan2(p[1], p[0])]).sort((p, q) => p[1] - q[1]);
+  let tL = Math.atan2(pL[1], pL[0]); if (tL > Math.PI - 0.5) tL -= 2 * Math.PI;
+  return { pL, tL, c1: ci[0][0], tC1: ci[0][1] };
+}
+// Outline points of the merged upper edge, left tip to angle b, plus 2 guide points on the pupil
+// circle after b (for the end tangent only).
+export function mergedEdge(opts = {}, step = 1.5) {
+  const m = { ...MERGE_DEFAULT, ...(opts.merge || {}) };
+  const ta = m.a * DEG, tb = m.b * DEG, R = BASE.R, rU = upperPolar(opts);
+  const { pL, tL } = mergeFrame();
+  const r = (t) => (t <= ta ? rU(t) : R + (rU(t) - R) * (1 - sstep2((t - ta) / (tb - ta))));
+  const n = Math.max(8, Math.ceil((tb - tL) / (step * DEG)));
+  const pts = [pL];
+  for (let i = 1; i <= n + 2; i++) { const t = tL + (tb - tL) * i / n; const rr = i > n ? R : r(t); pts.push([rr * Math.cos(t), rr * Math.sin(t)]); }
+  return { pts, n, r, ta, tb };
+}
+function mergedEyePath(px, py, ox, oy, opts) {
+  const P = (p) => `${f(p[0] + px + ox)} ${f(p[1] + py + oy)}`;
+  const { pts, n, tb } = mergedEdge(opts);
+  const { I, R } = BASE, { c1, tC1, pL } = mergeFrame();
+  let d = `M${P(pts[0])}`;
+  for (let i = 0; i < n; i++) {
+    const p0 = pts[Math.max(0, i - 1)], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2];
+    const c1_ = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6];
+    const c2_ = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+    d += `C${P(c1_)} ${P(c2_)} ${P(p2)}`;
+  }
+  // Pupil clockwise from b to c1 (the long way round, over the bottom), then the lower edge back.
+  let span = tC1 - tb; while (span < 0) span += 2 * Math.PI;
+  return d + `A${f(R)} ${f(R)} 0 ${span > Math.PI ? 1 : 0} 1 ${P(c1)}A${f(I.r)} ${f(I.r)} 0 0 0 ${P(pL)}Z`;
+}
+
 function eyePath(px, py, ox, oy, opts) {
+  if (opts && opts.merge) return mergedEyePath(px, py, ox, oy, opts);
   if (opts && opts.grow) return growEyePath(px, py, ox, oy, opts.grow);
   const { O, I } = browCircles(opts);
   const oc = [px + O.dx, py + O.dy], ic = [px + I.dx, py + I.dy];

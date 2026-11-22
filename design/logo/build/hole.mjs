@@ -7,7 +7,10 @@ const svgTxt = fs.readFileSync(process.argv[2], 'utf8');
 const d = svgTxt.match(/ d="([^"]+)"/)[1];
 const vb = svgTxt.match(/viewBox="([^"]+)"/)[1].split(' ').map(Number);
 const subs = d.split(/(?=M)/);
-const eyeSubs = subs.slice(-4); // brow L, pupil L, brow R, pupil R
+// The body is the first 2 subpaths. Then brow L, pupil L, brow R, pupil R, or (merged joint, D2/F2)
+// one outline per eye.
+const eyeSubs = subs.slice(2);
+console.log('eye subpaths:', eyeSubs.length);
 const render = async (paths, rule) => {
   const s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb.join(' ')}" width="${vb[2]*4}" height="${vb[3]*4}"><rect width="100%" height="100%" fill="#fff"/>${paths.map(p => `<path fill-rule="${rule}" d="${p}"/>`).join('')}</svg>`;
   return sharp(Buffer.from(s)).greyscale().raw().toBuffer();
