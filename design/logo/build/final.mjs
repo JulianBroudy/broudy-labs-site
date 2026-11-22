@@ -6,16 +6,16 @@ const SRC = process.argv[2];
 const DEST = process.argv[3];
 fs.mkdirSync(DEST, { recursive: true });
 const { W, H } = JSON.parse(fs.readFileSync('comps.json'));
-import { fullPath, tightSvg, squareSvg, shareFor, MH, MW, BX0, BY0 } from './geom.mjs';
+import { fullPath, tightSvg, squareSvg, shareFor, MH, MW, BX0, BY0, MAIN } from './geom.mjs';
 
 // ---------- 1. logo SVGs: tight viewBox, 40px padding (~3.5% of height) ----------
-fs.writeFileSync(`${DEST}/logo.svg`, tightSvg({}, null));
-fs.writeFileSync(`${DEST}/logo-white.svg`, tightSvg({}, '#fff'));
-fs.writeFileSync(`${DEST}/logo-currentcolor.svg`, tightSvg({}, 'currentColor'));
-// favicon.svg: prefers-color-scheme aware (black on light tabs, white on dark tabs). Main geometry.
+fs.writeFileSync(`${DEST}/logo.svg`, tightSvg(MAIN, null));
+fs.writeFileSync(`${DEST}/logo-white.svg`, tightSvg(MAIN, '#fff'));
+fs.writeFileSync(`${DEST}/logo-currentcolor.svg`, tightSvg(MAIN, 'currentColor'));
+// favicon.svg: prefers-color-scheme aware (black on light tabs, white on dark tabs). Main geometry (MAIN = F2).
 {
   const S = MH / 0.94; const sx = (S - MW) / 2 - BX0, sy = (S - MH) / 2 - BY0; const r = (n) => Math.round(n * 10) / 10;
-  const fav = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${r(S)} ${r(S)}"><style>path{fill:#000}@media(prefers-color-scheme:dark){path{fill:#fff}}</style><path d="${fullPath(sx, sy, {})}"/></svg>
+  const fav = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${r(S)} ${r(S)}"><style>path{fill:#000}@media(prefers-color-scheme:dark){path{fill:#fff}}</style><path d="${fullPath(sx, sy, MAIN)}"/></svg>
 `;
   fs.writeFileSync(`${DEST}/favicon.svg`, fav);
 }
@@ -26,13 +26,13 @@ fs.mkdirSync(`${DEST}/png`, { recursive: true });
 const sizes = [16, 32, 48, 64, 180, 192, 512, 1024];
 for (const s of sizes) {
   const share = shareFor(s);
-  const sv = squareSvg(share, {}, null, null);
+  const sv = squareSvg(share, MAIN, null, null);
   await sharp(Buffer.from(sv), { density: 72 * s / 100 }).resize(s, s).png().toFile(`${DEST}/png/logo-${s}.png`);
-  await sharp(Buffer.from(squareSvg(share, {}, '#fff', null)), { density: 72 * s / 100 }).resize(s, s).png().toFile(`${DEST}/png/logo-white-${s}.png`);
+  await sharp(Buffer.from(squareSvg(share, MAIN, '#fff', null)), { density: 72 * s / 100 }).resize(s, s).png().toFile(`${DEST}/png/logo-white-${s}.png`);
 }
 // avatar 800x800: round-crop safe. Find the farthest ink point from the square centre for a given share.
 async function maxRadius(share) {
-  const sv = squareSvg(share, {}, null, '#fff');
+  const sv = squareSvg(share, MAIN, null, '#fff');
   const N = 800;
   const { data } = await sharp(Buffer.from(sv)).resize(N, N).greyscale().raw().toBuffer({ resolveWithObject: true });
   let m = 0; for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) if (data[y * N + x] < 200) m = Math.max(m, Math.hypot(x + 0.5 - N / 2, y + 0.5 - N / 2));
@@ -40,12 +40,12 @@ async function maxRadius(share) {
 }
 let share = 0.8; while (await maxRadius(share) > 0.86) share -= 0.01;
 console.log('avatar share', share.toFixed(2), 'max radius', (await maxRadius(share)).toFixed(3));
-await sharp(Buffer.from(squareSvg(share, {}, '#000', '#fff'))).resize(800, 800).png().toFile(`${DEST}/png/avatar-800-light.png`);
-await sharp(Buffer.from(squareSvg(share, {}, '#fff', '#000'))).resize(800, 800).png().toFile(`${DEST}/png/avatar-800-dark.png`);
+await sharp(Buffer.from(squareSvg(share, MAIN, '#000', '#fff'))).resize(800, 800).png().toFile(`${DEST}/png/avatar-800-light.png`);
+await sharp(Buffer.from(squareSvg(share, MAIN, '#fff', '#000'))).resize(800, 800).png().toFile(`${DEST}/png/avatar-800-dark.png`);
 fs.writeFileSync('avatar-share.json', JSON.stringify({ share }));
 
 // ---------- 3. fidelity check (source space) ----------
-const srcSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}"><rect width="100%" height="100%" fill="#fff"/><path d="${fullPath(0, 0)}"/></svg>`;
+const srcSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}"><rect width="100%" height="100%" fill="#fff"/><path d="${fullPath(0, 0, MAIN)}"/></svg>`;
 const mine = await sharp(Buffer.from(srcSvg)).greyscale().raw().toBuffer();
 const src = await sharp(SRC).flatten({ background: '#fff' }).greyscale().raw().toBuffer();
 const ov = Buffer.alloc(W * H * 3); let a = 0, b = 0, both = 0;

@@ -1,5 +1,7 @@
 # Broudy Labs logo (vector)
 
+Main logo: option F2 (Julian's pick, 22 Nov 2026): brow 1.5x thicker than D, brow and pupil one outline. `MAIN` in `build/geom.mjs` is F2, and `final.mjs` builds every file below from it, so a rebuild gives the same files.
+
 Vector rebuild of `design/logo-source-chatgpt.png` (22 Nov 2026).
 
 ## Files
@@ -7,7 +9,7 @@ Vector rebuild of `design/logo-source-chatgpt.png` (22 Nov 2026).
 - `logo.svg`: black, tight viewBox (40 px padding at 1015 x 1138). One path, no transforms.
 - `logo-white.svg`: white, for dark backgrounds.
 - `logo-currentcolor.svg`: takes the CSS `color` of its parent (inline SVG).
-- `favicon.svg`: square, main geometry, black on light tabs and white on dark tabs. Not in use yet: `assets/favicon.svg` (the red block) is still the site favicon.
+- `favicon.svg`: square, main geometry, black on light tabs and white on dark tabs. Copied to `assets/favicon.svg` (the site favicon since 22 Nov 2026).
 - `png/logo-<size>.png` and `png/logo-white-<size>.png`: 16, 32, 48, 64, 180, 192, 512, 1024. Square, transparent, mark centred. All sizes use the main geometry (the small variant was removed on 22 Nov 2026).
 - `png/avatar-800-light.png`, `png/avatar-800-dark.png`: solid background, safe for a round crop (all ink inside 86% of the circle radius).
 - `options/`: brow options for the main logo (A, B, C, D = current), waiting for Julian to pick. `options/brow-options.png` is the comparison sheet, `options/options.json` the numbers.
@@ -26,8 +28,15 @@ Vector rebuild of `design/logo-source-chatgpt.png` (22 Nov 2026).
 6. `options.mjs`: the brow options and their sheet.
 7. `hole.mjs`: check that no eye shape cuts a hole in another one.
 
-Run in `build/` after `npm install`: `node analyse.mjs ../../logo-source-chatgpt.png comps.json`, `node eyes.mjs`, `node trace.mjs 2.5 0.6`, `node final.mjs ../../logo-source-chatgpt.png ..`, `node sheet.mjs ../../logo-source-chatgpt.png ..`, `node options.mjs ../options`, `node hole.mjs ../logo-white.svg`.
+Run in `build/` after `npm install`: `node analyse.mjs ../../logo-source-chatgpt.png comps.json`, `node eyes.mjs`, `node trace.mjs 2.5 0.6`, `node final.mjs ../../logo-source-chatgpt.png ..`, `node sheet.mjs ../../logo-source-chatgpt.png ..`, `node options.mjs ../options`, `node hole.mjs ../logo-white.svg`, `node site.mjs ../../../assets` (site icons).
 
 ## Fix of 22 Nov 2026: hole where the brow meets the pupil
 
 The brow path runs clockwise and the pupil ran anticlockwise. The right tip of each brow overlaps the pupil by about 1 px (as in the source). Under the nonzero fill rule, opposite directions cancel, so the overlap was a hole: a hairline gap at the top right of each pupil. On white logos it shows as a dark notch in the pupil. The pupil now runs clockwise too, so the brow joins the pupil as in the source. Fidelity improved a little (mismatch 0.656% to 0.649% of ink).
+
+## On the site (22 Nov 2026)
+
+- `build/site.mjs` writes to `assets/`: `favicon.svg` (copy), `logo-mark.svg` (no padding), `apple-touch-icon.png` (180 px, opaque, ink #14211F on paper #E7EEEA), `favicon-32.png` (32 px, opaque fallback).
+- Header: `.brand i` in `assets/site.css` draws `logo-mark.svg` as a CSS mask in the text colour, 21.2 x 24 px. It follows dark mode. The header height is unchanged (48 px).
+- `404.html` has the mark as inline SVG (it cannot use relative URLs).
+- Screenshots: `check/site/` (home, skedaddle and 404; 412 and 1280 px; light and dark; plus a header zoom of each).

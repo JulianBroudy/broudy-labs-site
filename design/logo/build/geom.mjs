@@ -128,6 +128,9 @@ function growEyePath(px, py, ox, oy, gr) {
 // flat shoulder on the right of the pupil; -65 to 20 is convex all the way (convex.mjs) and ends near
 // the pupil's right side, as in the source. a must stay right of the lower edge's meeting point (-72.7).
 export const MERGE_DEFAULT = { a: -65, b: 20 };
+// The main logo since 22 Nov 2026: option F2 (Julian's pick). Brow 1.5x D's max thickness, merged joint.
+// final.mjs builds every deliverable with these options. {} still means D (used by the option scripts).
+export const MAIN = { grow: { max: 1.5 }, merge: {} };
 const DEG = Math.PI / 180;
 const sstep2 = (x) => (x <= 0 ? 0 : x >= 1 ? 1 : x * x * x * (x * (6 * x - 15) + 10));
 // Distance from the pupil centre to D's outer circle along the ray at angle t.
