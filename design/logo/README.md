@@ -11,6 +11,7 @@ Vector rebuild of `design/logo-source-chatgpt.png` (22 Nov 2026).
 - `png/logo-<size>.png` and `png/logo-white-<size>.png`: 16, 32, 48, 64, 180, 192, 512, 1024. Square, transparent, mark centred. All sizes use the main geometry (the small variant was removed on 22 Nov 2026).
 - `png/avatar-800-light.png`, `png/avatar-800-dark.png`: solid background, safe for a round crop (all ink inside 86% of the circle radius).
 - `options/`: brow options for the main logo (A, B, C, D = current), waiting for Julian to pick. `options/brow-options.png` is the comparison sheet, `options/options.json` the numbers.
+- Round 2 (22 Nov 2026, after Julian picked D because its brows are joined to the pupils): E, F, G are 1.25x, 1.5x and 1.75x thicker at the widest point. The lower edge and the joint with the pupil are exactly D's. The upper edge is D's, pushed out by a factor that fades back to 1 before the brow reaches the pupil. Sheet: `options/brow-options-2.png` (rows D, E, F, G, plus the left eye at 512 px next to the source eye). Numbers: `options/options-2.json`. Script: `build/options2.mjs` (`node options2.mjs ../options ../../logo-source-chatgpt.png`).
 - `contact-sheet.png`: source vs vector, diff, sizes, colourways, circle crop.
 - `check/diff-overlay.png`, `check/diff-stats.json`: fidelity check at source size.
 
