@@ -21,7 +21,7 @@ await img(1280, y, T, T, file(`${D}/check/diff-overlay.png`)); label(1280, y + T
 const eyeZoom = await sharp(`${D}/check/diff-overlay.png`).extract({ left: 440, top: 620, width: 400, height: 260 }).resize(T, Math.round(T * 260 / 400), { kernel: 'nearest' }).toBuffer();
 await img(1900, y, T, Math.round(T * 260 / 400), eyeZoom); label(1900, y + Math.round(T * 260 / 400) + 30, 'Eyes, diff zoom: both eyes made identical', 18);
 // Row 2: sizes
-y = 760; label(40, y, 'PNG exports (transparent, shown on light grey). 16 to 48 px use the thick-brow small variant.', 22);
+y = 760; label(40, y, 'PNG exports (transparent, shown on light grey)..', 22);
 y += 20;
 els.push(`<rect x="30" y="${y}" width="${W - 60}" height="330" fill="#eee"/>`);
 let x = 50;
@@ -39,7 +39,6 @@ const toPng = async (svgText, bg, w = 340) => sharp(Buffer.from(svgText)).resize
 await img(40, y, 300, 340, await toPng(logoSvg, '#ffffff')); label(40, y + 370, 'logo.svg', 18);
 await img(370, y, 300, 340, await toPng(fs.readFileSync(`${D}/logo-white.svg`, 'utf8'), '#111111')); label(370, y + 370, 'logo-white.svg', 18);
 await img(700, y, 300, 340, await toPng(logoSvg.replace('<path', '<path fill="#C23C2B"'), '#fff6f0')); label(700, y + 370, 'currentColor, e.g. site red', 18);
-await img(1030, y, 300, 340, await toPng(fs.readFileSync(`${D}/logo-small.svg`, 'utf8'), '#ffffff')); label(1030, y + 370, 'logo-small.svg (thick brows)', 18);
 for (const [i, n] of ['avatar-800-light', 'avatar-800-dark'].entries()) {
   const cx = 1360 + i * 380;
   els.push(`<defs><clipPath id="c${i}"><circle cx="${cx + 170}" cy="${y + 170}" r="170"/></clipPath></defs>`);

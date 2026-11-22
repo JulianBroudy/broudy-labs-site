@@ -1,8 +1,8 @@
 {
-  "sourceOnlyPx": 1784,
+  "sourceOnlyPx": 1755,
   "vectorOnlyPx": 976,
-  "sharedPx": 418904,
-  "mismatchPctOfSourceInk": 0.656,
-  "mismatchPctOfCanvas": 0.176,
+  "sharedPx": 418933,
+  "mismatchPctOfSourceInk": 0.649,
+  "mismatchPctOfCanvas": 0.174,
   "iou": 0.9935
 }

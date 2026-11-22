@@ -1,0 +1,27 @@
+[
+  {
+    "id": "A",
+    "thick": 1.4,
+    "browMidThicknessSrcPx": 24.2,
+    "gapToPupilSrcPx": -0.9
+  },
+  {
+    "id": "B",
+    "thick": 1.8,
+    "browMidThicknessSrcPx": 31.1,
+    "gapToPupilSrcPx": -0.9
+  },
+  {
+    "id": "C",
+    "thick": 1.8,
+    "scale": 1.06,
+    "lift": 4,
+    "browMidThicknessSrcPx": 31.1,
+    "gapToPupilSrcPx": 5.6
+  },
+  {
+    "id": "D",
+    "browMidThicknessSrcPx": 17.3,
+    "gapToPupilSrcPx": -0.9
+  }
+]
