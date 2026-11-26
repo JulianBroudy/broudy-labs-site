@@ -17,7 +17,7 @@ Plain static HTML. No framework, no build step, no trackers, no cookies, no exte
 | `/app-ads.txt` | The AdMob seller line |
 | `/404.html` | Page not found |
 
-Games: `skedaddle`, `budge`, `plonk`, `whackayou`. Hoopwood has no pages yet.
+Games: `skedaddle`, `budge`, `plonk`, `whackayou`, `hoopwood`, `pootle`.
 
 All links are relative (`../privacy/`, never `/budge/privacy/` and never `.html`), so the site works on the github.io path and on the custom domain. The only exception is `404.html`: GitHub shows it at any depth, so it has inline style and a small inline script that finds the site root.
 
